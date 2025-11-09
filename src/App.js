@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppProvider";
+import Navbar from "./components/Navbar";
+import MainContent from "./components/MainContent";
+import "./App.css";
+
+// Lazy load SavedPage (loads only when needed)
+const SavedPage = lazy(() => import("./pages/SavedPage"));
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppProvider>
+      <Router>
+        <div>
+          <Navbar />
+          <Routes>
+            {/* Home page */}
+            <Route path="/" element={<MainContent />} />
+
+            {/* Saved jokes page - wrapped in Suspense for lazy loading */}
+            <Route path="/saved" element={
+                <Suspense fallback={<p style={{ textAlign: "center" }}>Loading Saved Page...</p>}>
+                  <SavedPage />
+                </Suspense>
+             
+              }
+            />
+          </Routes>
+        </div>
+      </Router>
+    </AppProvider>
   );
 }
 
